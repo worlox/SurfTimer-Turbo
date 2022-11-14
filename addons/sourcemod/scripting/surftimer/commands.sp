@@ -122,6 +122,7 @@ void CreateCommands()
 	RegConsoleCmd("sm_gf", Command_SetGravityFix, "[surftimer] [zoner] Toggle the gravity fix on the current map");
 	RegConsoleCmd("sm_triggers", Command_ToggleTriggers, "[surftimer] [zoner] Toggle display of map triggers");
 	RegConsoleCmd("sm_noclipspeed", Command_NoclipSpeed, "[surftimer] [zoner] Changes the value of sv_noclipspeed");
+	RegConsoleCmd("sm_ncs", Command_NoclipSpeed, "[surftimer] [zoner] Changes the value of sv_noclipspeed");
 
 	// VIP Commands
 	RegAdminCmd("sm_fixbot", Admin_FixBot, g_VipFlag, "[surftimer] Toggles replay bots off and on");
@@ -1421,6 +1422,7 @@ public Action Command_Restart(int client, int args)
 			g_bClientRestarting[client] = true;
 			CPrintToChat(client, "%t", "Commands34", g_szChatPrefix);
 			EmitSoundToClientNoPreCache(client, "play ambient/misc/clank4", false);
+			teleportClient(client, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], false); // tele to stage start on first press
 			return Plugin_Handled;
 		}
 	}
