@@ -120,7 +120,6 @@ void CreateCommands()
 	RegConsoleCmd("sm_gf", Command_SetGravityFix, "[surftimer] [zoner] Toggle the gravity fix on the current map");
 	RegConsoleCmd("sm_triggers", Command_ToggleTriggers, "[surftimer] [zoner] Toggle display of map triggers");
 	RegConsoleCmd("sm_noclipspeed", Command_NoclipSpeed, "[surftimer] [zoner] Changes the value of sv_noclipspeed");
-	RegConsoleCmd("sm_ncs", Command_NoclipSpeed, "[surftimer] [zoner] Changes the value of sv_noclipspeed");
 
 	// VIP Commands
 	RegAdminCmd("sm_fixbot", Admin_FixBot, g_VipFlag, "[surftimer] Toggles replay bots off and on");
@@ -1410,16 +1409,15 @@ public Action Command_Restart(int client, int args)
 		if (GetGameTime() - g_fClientRestarting[client] > 5.0)
 			g_bClientRestarting[client] = false;
 
--		// Check that the client has a timer running, the zonegroup he is in has stages and that this is the first click
--		if (IsValidClient(client) && g_bTimerRunning[client] && g_mapZonesTypeCount[g_iClientInZone[client][2]][3] > 0 && !g_bClientRestarting[client] && g_Stage[g_iClientInZone[client][2]][client] > 1)
+		// Check that the client has a timer running, the zonegroup he is in has stages and that this is the first click
+		if (IsValidClient(client) && g_bTimerRunning[client] && g_mapZonesTypeCount[g_iClientInZone[client][2]][3] > 0 && !g_bClientRestarting[client] && g_Stage[g_iClientInZone[client][2]][client] > 1)
 		{
 			g_fClientRestarting[client] = GetGameTime();
 			g_bClientRestarting[client] = true;
 			CPrintToChat(client, "%t", "Commands34", g_szChatPrefix);
 			EmitSoundToClientNoPreCache(client, "play ambient/misc/clank4", false);
-			teleportClient(client, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], false);
 			return Plugin_Handled;
-		} 
+		}
 	}
 
 	g_bClientRestarting[client] = false;
