@@ -1412,18 +1412,31 @@ public Action Command_Restart(int client, int args)
 
 	if (GetConVarBool(g_hDoubleRestartCommand) && args == 0)
 	{
-		if (GetGameTime() - g_fClientRestarting[client] > 5.0)
+		if (GetGameTime() - g_fClientRestarting[client] > 0.65)
 			g_bClientRestarting[client] = false;
 
-		// Check that the client has a timer running, the zonegroup he is in has stages and that this is the first click
-		if (IsValidClient(client) && g_bTimerRunning[client] && g_mapZonesTypeCount[g_iClientInZone[client][2]][3] > 0 && !g_bClientRestarting[client] && g_Stage[g_iClientInZone[client][2]][client] > 1)
+		// Check if the client is valid, timer is running and that this is the first press
+		if (IsValidClient(client) && g_bTimerRunning[client] && !g_bClientRestarting[client])
 		{
-			g_fClientRestarting[client] = GetGameTime();
-			g_bClientRestarting[client] = true;
-			CPrintToChat(client, "%t", "Commands34", g_szChatPrefix);
-			EmitSoundToClientNoPreCache(client, "play ambient/misc/clank4", false);
-			teleportClient(client, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], false); // tele to stage start on first press
-			return Plugin_Handled;
+			// Zone & Command Priority - stage !rs, bonus !b/!startpos, main !r
+			if (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] > 0 && g_Stage[g_iClientInZone[client][2]][client] > 1) // Check the zonegroup they are in has stages
+			{
+				g_fClientRestarting[client] = GetGameTime();
+				g_bClientRestarting[client] = true;
+				CPrintToChat(client, "%t", "Commands34", g_szChatPrefix);
+				EmitSoundToClientNoPreCache(client, "play ambient/misc/clank4", false);	
+				teleportClient(client, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], false);
+				return Plugin_Handled;
+			}
+			else if (g_bInBonus[client] || g_bStartposUsed[client][g_iClientInZone[client][2]]) // Check if client is on bonus or has set a startpos
+			{
+				g_fClientRestarting[client] = GetGameTime();
+				g_bClientRestarting[client] = true;
+				CPrintToChat(client, "%t", "Commands34", g_szChatPrefix);
+				EmitSoundToClientNoPreCache(client, "play ambient/misc/clank4", false);	
+				teleportClient(client, g_iClientInZone[client][2], 1, true);
+				return Plugin_Handled;
+			}
 		}
 	}
 
